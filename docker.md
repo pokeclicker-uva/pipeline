@@ -10,6 +10,7 @@ First of all, we want to create the EC2 instance. Depending on the amount of use
 Login to your instance via ssh. Then, run the following commands sequentially to install and run Docker:
 
 `sudo yum update -y`
+ 
 `sudo yum install -y docker`
 `sudo service docker start`
 
