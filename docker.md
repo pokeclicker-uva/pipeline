@@ -12,17 +12,21 @@ Login to your instance via ssh. Then, run the following commands sequentially to
 `sudo yum update -y`
  
 `sudo yum install -y docker`
+ 
 `sudo service docker start`
 
 Next, create a user with which we will access the server via Jenkins to run docker-related commands:
 
 `useradd dockeradmin`
+ 
 `passwd dockeradmin`
 
 Give this user the right permissions:
 
 `usermod -aG docker dockeradmin`
+ 
 `sudo mkdir /opt/docker`
+ 
 `sudo chown -R dockeradmin:dockeradmin /opt/docker`
 
 Finally, we want to enable remote access for this user. By default, remote access with username password combinations is disabled on EC2 instances. We can enable this by editing a ssh config file:
