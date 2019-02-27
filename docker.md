@@ -17,13 +17,13 @@ Login to your instance via ssh. Then, run the following commands sequentially to
 
 Next, create a user with which we will access the server via Jenkins to run docker-related commands:
 
-`useradd dockeradmin`
+`sudo useradd dockeradmin`
  
-`passwd dockeradmin`
+`sudo passwd dockeradmin`
 
 Give this user the right permissions:
 
-`usermod -aG docker dockeradmin`
+`sudo usermod -aG docker dockeradmin`
  
 `sudo mkdir /opt/docker`
  
