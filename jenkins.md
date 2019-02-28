@@ -17,6 +17,8 @@ Next, login to your instance via ssh. Then, run the following commands sequentia
 
 `sudo rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key`
 
+`sudo yum install jenkins`
+
 `sudo service jenkins start`
 
 As Jenkins is going to build our projects, we need some tools that aid in building this projects. To do this, we can install "git", "maven" and a group of packages for development purposes using the following commands:
