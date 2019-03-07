@@ -1,4 +1,4 @@
-This tutorial shows how to install an EC2 instance running Docker, as a requirement to run the CI/CD environment of the PokeClicker application. Installing this Docker environment is very easy, and only consists of running some simple commands in an EC2 instance. 
+This tutorial shows how to install an EC2 instance running Docker, as a requirement to run the CI/CD environment of the PokeClicker application. Alternatively you can use the [AWS CloudFormation file](https://github.com/pokeclicker/pipeline/blob/master/Docker_CloudFormation.template) to deploy the same.
 
 First of all, we want to create the EC2 instance. Depending on the amount of users, you might want a bigger instance. Overall, "micro" should be fine to run a test environment, so for this tutorial we'll create a "micro" instance. This can be done with the following steps:
 
