@@ -1,0 +1,400 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "PokeClicker Docker Server instance. This template sets up a single docker server for PokeClicker.",
+
+  "Parameters" : {
+
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+    },
+
+    "InstanceType" : {
+      "Description" : "WebServer EC2 instance type",
+      "Type" : "String",
+      "Default" : "t2.small",
+      "AllowedValues" : [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+,
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+
+    "SSHLocation" : {
+      "Description" : " The IP address range that can be used to SSH to the EC2 instances",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+    },
+
+"DockerUser": {
+      "NoEcho": "false",
+      "Description" : "Username for Docker Account",
+      "Type": "String",
+      "MinLength": "5",
+      "MaxLength": "50",
+      "Default": "dockeradmin",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+
+"DockerPassword": {
+      "NoEcho": "true",
+      "Description" : "Password for Docker Account",
+      "Type": "String",
+      "MinLength": "5",
+      "MaxLength": "50",
+      "Default": "dockeradmin",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    }
+  },
+
+  "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "HVM64"  },
+      "t2.nano"     : { "Arch" : "HVM64"  },
+      "t2.micro"    : { "Arch" : "HVM64"  },
+      "t2.small"    : { "Arch" : "HVM64"  },
+      "t2.medium"   : { "Arch" : "HVM64"  },
+      "t2.large"    : { "Arch" : "HVM64"  },
+      "m1.small"    : { "Arch" : "HVM64"  },
+      "m1.medium"   : { "Arch" : "HVM64"  },
+      "m1.large"    : { "Arch" : "HVM64"  },
+      "m1.xlarge"   : { "Arch" : "HVM64"  },
+      "m2.xlarge"   : { "Arch" : "HVM64"  },
+      "m2.2xlarge"  : { "Arch" : "HVM64"  },
+      "m2.4xlarge"  : { "Arch" : "HVM64"  },
+      "m3.medium"   : { "Arch" : "HVM64"  },
+      "m3.large"    : { "Arch" : "HVM64"  },
+      "m3.xlarge"   : { "Arch" : "HVM64"  },
+      "m3.2xlarge"  : { "Arch" : "HVM64"  },
+      "m4.large"    : { "Arch" : "HVM64"  },
+      "m4.xlarge"   : { "Arch" : "HVM64"  },
+      "m4.2xlarge"  : { "Arch" : "HVM64"  },
+      "m4.4xlarge"  : { "Arch" : "HVM64"  },
+      "m4.10xlarge" : { "Arch" : "HVM64"  },
+      "c1.medium"   : { "Arch" : "HVM64"  },
+      "c1.xlarge"   : { "Arch" : "HVM64"  },
+      "c3.large"    : { "Arch" : "HVM64"  },
+      "c3.xlarge"   : { "Arch" : "HVM64"  },
+      "c3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c3.4xlarge"  : { "Arch" : "HVM64"  },
+      "c3.8xlarge"  : { "Arch" : "HVM64"  },
+      "c4.large"    : { "Arch" : "HVM64"  },
+      "c4.xlarge"   : { "Arch" : "HVM64"  },
+      "c4.2xlarge"  : { "Arch" : "HVM64"  },
+      "c4.4xlarge"  : { "Arch" : "HVM64"  },
+      "c4.8xlarge"  : { "Arch" : "HVM64"  },
+      "g2.2xlarge"  : { "Arch" : "HVMG2"  },
+      "g2.8xlarge"  : { "Arch" : "HVMG2"  },
+      "r3.large"    : { "Arch" : "HVM64"  },
+      "r3.xlarge"   : { "Arch" : "HVM64"  },
+      "r3.2xlarge"  : { "Arch" : "HVM64"  },
+      "r3.4xlarge"  : { "Arch" : "HVM64"  },
+      "r3.8xlarge"  : { "Arch" : "HVM64"  },
+      "i2.xlarge"   : { "Arch" : "HVM64"  },
+      "i2.2xlarge"  : { "Arch" : "HVM64"  },
+      "i2.4xlarge"  : { "Arch" : "HVM64"  },
+      "i2.8xlarge"  : { "Arch" : "HVM64"  },
+      "d2.xlarge"   : { "Arch" : "HVM64"  },
+      "d2.2xlarge"  : { "Arch" : "HVM64"  },
+      "d2.4xlarge"  : { "Arch" : "HVM64"  },
+      "d2.8xlarge"  : { "Arch" : "HVM64"  },
+      "hi1.4xlarge" : { "Arch" : "HVM64"  },
+      "hs1.8xlarge" : { "Arch" : "HVM64"  },
+      "cr1.8xlarge" : { "Arch" : "HVM64"  },
+      "cc2.8xlarge" : { "Arch" : "HVM64"  }
+    },
+
+    "AWSInstanceType2NATArch" : {
+      "t1.micro"    : { "Arch" : "NATHVM64"  },
+      "t2.nano"     : { "Arch" : "NATHVM64"  },
+      "t2.micro"    : { "Arch" : "NATHVM64"  },
+      "t2.small"    : { "Arch" : "NATHVM64"  },
+      "t2.medium"   : { "Arch" : "NATHVM64"  },
+      "t2.large"    : { "Arch" : "NATHVM64"  },
+      "m1.small"    : { "Arch" : "NATHVM64"  },
+      "m1.medium"   : { "Arch" : "NATHVM64"  },
+      "m1.large"    : { "Arch" : "NATHVM64"  },
+      "m1.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m2.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m2.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m2.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "m3.medium"   : { "Arch" : "NATHVM64"  },
+      "m3.large"    : { "Arch" : "NATHVM64"  },
+      "m3.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.large"    : { "Arch" : "NATHVM64"  },
+      "m4.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m4.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.10xlarge" : { "Arch" : "NATHVM64"  },
+      "c1.medium"   : { "Arch" : "NATHVM64"  },
+      "c1.xlarge"   : { "Arch" : "NATHVM64"  },
+      "c3.large"    : { "Arch" : "NATHVM64"  },
+      "c3.xlarge"   : { "Arch" : "NATHVM64"  },
+      "c3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "c3.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "c3.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "c4.large"    : { "Arch" : "NATHVM64"  },
+      "c4.xlarge"   : { "Arch" : "NATHVM64"  },
+      "c4.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "c4.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "c4.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "g2.2xlarge"  : { "Arch" : "NATHVMG2"  },
+      "g2.8xlarge"  : { "Arch" : "NATHVMG2"  },
+      "r3.large"    : { "Arch" : "NATHVM64"  },
+      "r3.xlarge"   : { "Arch" : "NATHVM64"  },
+      "r3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "r3.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "r3.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "i2.xlarge"   : { "Arch" : "NATHVM64"  },
+      "i2.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "i2.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "i2.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "d2.xlarge"   : { "Arch" : "NATHVM64"  },
+      "d2.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "d2.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "d2.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "hi1.4xlarge" : { "Arch" : "NATHVM64"  },
+      "hs1.8xlarge" : { "Arch" : "NATHVM64"  },
+      "cr1.8xlarge" : { "Arch" : "NATHVM64"  },
+      "cc2.8xlarge" : { "Arch" : "NATHVM64"  }
+    }
+,
+    "AWSRegionArch2AMI" : {
+      "us-east-1"        : {"HVM64" : "ami-0ff8a91507f77f867", "HVMG2" : "ami-0a584ac55a7631c0c"},
+      "us-west-2"        : {"HVM64" : "ami-a0cfeed8", "HVMG2" : "ami-0e09505bc235aa82d"},
+      "us-west-1"        : {"HVM64" : "ami-0bdb828fd58c52235", "HVMG2" : "ami-066ee5fd4a9ef77f1"},
+      "eu-west-1"        : {"HVM64" : "ami-047bb4163c506cd98", "HVMG2" : "ami-0a7c483d527806435"},
+      "eu-west-2"        : {"HVM64" : "ami-f976839e", "HVMG2" : "NOT_SUPPORTED"},
+      "eu-west-3"        : {"HVM64" : "ami-0ebc281c20e89ba4b", "HVMG2" : "NOT_SUPPORTED"},
+      "eu-central-1"     : {"HVM64" : "ami-0233214e13e500f77", "HVMG2" : "ami-06223d46a6d0661c7"},
+      "ap-northeast-1"   : {"HVM64" : "ami-06cd52961ce9f0d85", "HVMG2" : "ami-053cdd503598e4a9d"},
+      "ap-northeast-2"   : {"HVM64" : "ami-0a10b2721688ce9d2", "HVMG2" : "NOT_SUPPORTED"},
+      "ap-northeast-3"   : {"HVM64" : "ami-0d98120a9fb693f07", "HVMG2" : "NOT_SUPPORTED"},
+      "ap-southeast-1"   : {"HVM64" : "ami-08569b978cc4dfa10", "HVMG2" : "ami-0be9df32ae9f92309"},
+      "ap-southeast-2"   : {"HVM64" : "ami-09b42976632b27e9b", "HVMG2" : "ami-0a9ce9fecc3d1daf8"},
+      "ap-south-1"       : {"HVM64" : "ami-0912f71e06545ad88", "HVMG2" : "ami-097b15e89dbdcfcf4"},
+      "us-east-2"        : {"HVM64" : "ami-0b59bfac6be064b78", "HVMG2" : "NOT_SUPPORTED"},
+      "ca-central-1"     : {"HVM64" : "ami-0b18956f", "HVMG2" : "NOT_SUPPORTED"},
+      "sa-east-1"        : {"HVM64" : "ami-07b14488da8ea02a0", "HVMG2" : "NOT_SUPPORTED"},
+      "cn-north-1"       : {"HVM64" : "ami-0a4eaf6c4454eda75", "HVMG2" : "NOT_SUPPORTED"},
+      "cn-northwest-1"   : {"HVM64" : "ami-6b6a7d09", "HVMG2" : "NOT_SUPPORTED"}
+    }
+
+  },
+
+  "Resources" : {
+
+    "WebServerInstance": {
+      "Type": "AWS::EC2::Instance",
+      "Metadata" : {
+        "AWS::CloudFormation::Init" : {
+          "configSets" : {
+            "InstallAndRun" : [ "Install", "Configure" ]
+          },
+
+          "Install" : {
+            "packages" : {
+              "yum" : {
+                "docker"        : []
+              }
+            },
+
+            "files" : {
+              "/etc/ssh/sshd_config" : {
+                "content" : { "Fn::Join" : [ "", [
+                  "#\t$OpenBSD: sshd_config,v 1.100 2016\/08\/15 12:32:04 naddy Exp $\r\n\r\n# This is the sshd server system-wide configuration file.  See\r\n# sshd_config(5) for more information.\r\n\r\n# This sshd was compiled with PATH=\/usr\/local\/bin:\/usr\/bin\r\n\r\n# The strategy used for options in the default sshd_config shipped with\r\n# OpenSSH is to specify options with their default value where\r\n# possible, but leave them commented.  Uncommented options override the\r\n# default value.\r\n\r\n# If you want to change the port on a SELinux system, you have to tell\r\n# SELinux about this change.\r\n# semanage port -a -t ssh_port_t -p tcp #PORTNUMBER\r\n#\r\n#Port 22\r\n#AddressFamily any\r\n#ListenAddress 0.0.0.0\r\n#ListenAddress ::\r\n\r\nHostKey \/etc\/ssh\/ssh_host_rsa_key\r\n#HostKey \/etc\/ssh\/ssh_host_dsa_key\r\nHostKey \/etc\/ssh\/ssh_host_ecdsa_key\r\nHostKey \/etc\/ssh\/ssh_host_ed25519_key\r\n\r\n# Ciphers and keying\r\n#RekeyLimit default none\r\n\r\n# Logging\r\n#SyslogFacility AUTH\r\nSyslogFacility AUTHPRIV\r\n#LogLevel INFO\r\n\r\n# Authentication:\r\n\r\n#LoginGraceTime 2m\r\n#PermitRootLogin yes\r\n#StrictModes yes\r\n#MaxAuthTries 6\r\n#MaxSessions 10\r\n\r\n#PubkeyAuthentication yes\r\n\r\n# The default is to check both .ssh\/authorized_keys and .ssh\/authorized_keys2\r\n# but this is overridden so installations will only check .ssh\/authorized_keys\r\nAuthorizedKeysFile .ssh\/authorized_keys\r\n\r\n#AuthorizedPrincipalsFile none\r\n\r\n\r\n# For this to work you will also need host keys in \/etc\/ssh\/ssh_known_hosts\r\n#HostbasedAuthentication no\r\n# Change to yes if you don't trust ~\/.ssh\/known_hosts for\r\n# HostbasedAuthentication\r\n#IgnoreUserKnownHosts no\r\n# Don't read the user's ~\/.rhosts and ~\/.shosts files\r\n#IgnoreRhosts yes\r\n\r\n# To disable tunneled clear text passwords, change to no here!\r\nPasswordAuthentication yes\r\n#PermitEmptyPasswords no\r\n#PasswordAuthentication no\r\n\r\n# Change to no to disable s\/key passwords\r\n#ChallengeResponseAuthentication yes\r\nChallengeResponseAuthentication no\r\n\r\n# Kerberos options\r\n#KerberosAuthentication no\r\n#KerberosOrLocalPasswd yes\r\n#KerberosTicketCleanup yes\r\n#KerberosGetAFSToken no\r\n#KerberosUseKuserok yes\r\n\r\n# GSSAPI options\r\nGSSAPIAuthentication yes\r\nGSSAPICleanupCredentials no\r\n#GSSAPIStrictAcceptorCheck yes\r\n#GSSAPIKeyExchange no\r\n#GSSAPIEnablek5users no\r\n\r\n# Set this to 'yes' to enable PAM authentication, account processing,\r\n# and session processing. If this is enabled, PAM authentication will\r\n# be allowed through the ChallengeResponseAuthentication and\r\n# PasswordAuthentication.  Depending on your PAM configuration,\r\n# PAM authentication via ChallengeResponseAuthentication may bypass\r\n# the setting of \"PermitRootLogin without-password\".\r\n# If you just want the PAM account and session checks to run without\r\n# PAM authentication, then enable this but set PasswordAuthentication\r\n# and ChallengeResponseAuthentication to 'no'.\r\n# WARNING: 'UsePAM no' is not supported in Red Hat Enterprise Linux and may cause several\r\n# problems.\r\nUsePAM yes\r\n\r\n#AllowAgentForwarding yes\r\n#AllowTcpForwarding yes\r\n#GatewayPorts no\r\nX11Forwarding yes\r\n#X11DisplayOffset 10\r\n#X11UseLocalhost yes\r\n#PermitTTY yes\r\n#PrintMotd yes\r\n#PrintLastLog yes\r\n#TCPKeepAlive yes\r\n#UseLogin no\r\n#UsePrivilegeSeparation sandbox\r\n#PermitUserEnvironment no\r\n#Compression delayed\r\n#ClientAliveInterval 0\r\n#ClientAliveCountMax 3\r\n#ShowPatchLevel no\r\n#UseDNS yes\r\n#PidFile \/var\/run\/sshd.pid\r\n#MaxStartups 10:30:100\r\n#PermitTunnel no\r\n#ChrootDirectory none\r\n#VersionAddendum none\r\n\r\n# no default banner path\r\n#Banner none\r\n\r\n# Accept locale-related environment variables\r\nAcceptEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES\r\nAcceptEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT\r\nAcceptEnv LC_IDENTIFICATION LC_ALL LANGUAGE\r\nAcceptEnv XMODIFIERS\r\n\r\n# override default of no subsystems\r\nSubsystem sftp\t\/usr\/libexec\/openssh\/sftp-server\r\n\r\n# Example of overriding settings on a per-user basis\r\n#Match User anoncvs\r\n#\tX11Forwarding no\r\n#\tAllowTcpForwarding no\r\n#\tPermitTTY no\r\n#\tForceCommand cvs server\r\n\r\nAuthorizedKeysCommand \/usr\/bin\/timeout 5s \/opt\/aws\/bin\/curl_authorized_keys %u %f\r\nAuthorizedKeysCommandUser ec2-instance-connect"
+                ]]},
+                "mode"  : "000400",
+                "owner" : "root",
+                "group" : "root"
+              },
+	"/etc/motd" : {
+                "content" : { "Fn::Join" : [ "", [
+                  "  _____      _         _____ _ _      _             \r\n |  __ \\    | |       \/ ____| (_)    | |            \r\n | |__) |__ | | _____| |    | |_  ___| | _____ _ __ \r\n |  ___\/ _ \\| |\/ \/ _ \\ |    | | |\/ __| |\/ \/ _ \\ '__|\r\n | |  | (_) |   <  __\/ |____| | | (__|   <  __\/ |   \r\n |_|   \\___\/|_|\\_\\___|\\_____|_|_|\\___|_|\\_\\___|_|   \r\n          |  __ \\           | |                     \r\n          | |  | | ___   ___| | _____ _ __          \r\n          | |  | |\/ _ \\ \/ __| |\/ \/ _ \\ '__|         \r\n          | |__| | (_) | (__|   <  __\/ |            \r\n          |_____\/ \\___\/ \\___|_|\\_\\___|_|            \r\n          \/ ____|                                   \r\n         | (___   ___ _ ____   _____ _ __           \r\n          \\___ \\ \/ _ \\ '__\\ \\ \/ \/ _ \\ '__|          \r\n          ____) |  __\/ |   \\ V \/  __\/ |             \r\n         |_____\/ \\___|_|    \\_\/ \\___|_|             \r\n                                                    \n"
+                ]]},
+                "mode"  : "000644",
+                "owner" : "root",
+                "group" : "root"
+              }
+            },
+            "services" : {
+              "sysvinit" : {
+                "docker"  : { "enabled" : "true", "ensureRunning" : "true" }
+              }
+            }
+          },
+
+          "Configure" : {
+            "commands": {
+              "update_yum": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "sudo yum update -y"
+                    ]
+                  ]
+                }
+              },
+              "retrieve_jenkins": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins.io/redhat/jenkins.repo"
+                    ]
+                  ]
+                }
+              },
+              "import_jenkins_to_rpm": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "sudo rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key"
+                    ]
+                  ]
+                }
+              },
+              "download_maven": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo"
+                    ]
+                  ]
+                }
+              },
+              "add_maven_to_repo": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "sudo sed -i s\/\\$releasever\/6\/g \/etc\/yum.repos.d\/epel-apache-maven.repo"
+                    ]
+                  ]
+                }
+              },
+              "download_java": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "wget --no-cookies --no-check-certificate --header \"Cookie: oraclelicense=accept-securebackup-cookie\"   \"http:\/\/download.oracle.com\/otn-pub\/java\/jdk\/11.0.2+9\/f51449fcd52f4d52b93a989c5c56ed3c\/jdk-11.0.2_linux-x64_bin.rpm\""
+                    ]
+                  ]
+                }
+              },
+              "install_java": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "sudo yum localinstall jdk-11.0.2_linux-x64_bin.rpm"
+                    ]
+                  ]
+                }
+              },
+              "install_jenkins_git": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "sudo yum install -y jenkins git apache-maven"
+                    ]
+                  ]
+                }
+              },
+              "install_devtools": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "sudo yum -y groupinstall \"Development Tools\""
+                    ]
+                  ]
+                }
+              },
+              "install_devtools": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "sudo service jenkins start"
+                    ]
+                  ]
+                }
+              },
+              "iptables_port_config": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "iptables -t nat -A OUTPUT -o lo -p tcp --dport 80 -j REDIRECT --to-port 8080"
+                    ]
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "Properties": {
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
+                          { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
+        "InstanceType"   : { "Ref" : "InstanceType" },
+        "SecurityGroups" : [ {"Ref" : "WebServerSecurityGroup"} ],
+        "KeyName"        : { "Ref" : "KeyName" },
+        "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+             "#!/bin/bash -xe\n",
+             "yum update -y aws-cfn-bootstrap\n",
+
+             "# Install the files and packages from the metadata\n",
+             "/opt/aws/bin/cfn-init -v ",
+             "         --stack ", { "Ref" : "AWS::StackName" },
+             "         --resource WebServerInstance ",
+             "         --configsets InstallAndRun ",
+             "         --region ", { "Ref" : "AWS::Region" }, "\n",
+
+             "# Signal the status from cfn-init\n",
+             "/opt/aws/bin/cfn-signal -e $? ",
+             "         --stack ", { "Ref" : "AWS::StackName" },
+             "         --resource WebServerInstance ",
+             "         --region ", { "Ref" : "AWS::Region" }, "\n"
+        ]]}}
+      },
+      "CreationPolicy" : {
+        "ResourceSignal" : {
+          "Timeout" : "PT5M"
+        }
+      }
+    },
+
+    "WebServerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable HTTP access via port 80",
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"},
+	  {"IpProtocol" : "tcp", "FromPort" : "8080", "ToPort" : "8080", "CidrIp" : "0.0.0.0/0"},
+          {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation"}}
+        ]
+      }
+    }
+  },
+
+  "Outputs" : {
+    "WebsiteURL" : {
+      "Description" : "URL for newly created LAMP stack",
+      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServerInstance", "PublicDnsName" ]}]] }
+    }
+  }
+}

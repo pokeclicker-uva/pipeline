@@ -503,14 +503,6 @@
                 "owner": "root",
                 "group": "root"
               }
-            },
-            "services": {
-              "sysvinit": {
-                "docker": {
-                  "enabled": "true",
-                  "ensureRunning": "true"
-                }
-              }
             }
           },
           "Configure": {
@@ -732,7 +724,7 @@
   },
   "Outputs": {
     "WebsiteURL": {
-      "Description": "URL for newly created LAMP stack",
+      "Description": "URL for newly created Jenkins installation.",
       "Value": {
         "Fn::Join": [
           "",
