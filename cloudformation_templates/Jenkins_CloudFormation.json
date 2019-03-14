@@ -522,7 +522,7 @@
                   "Fn::Join": [
                     "",
                     [
-                      "sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins.io/redhat/jenkins.repo"
+                      "curl --silent --location http:\/\/pkg.jenkins-ci.org\/redhat-stable\/jenkins.repo | sudo tee \/etc\/yum.repos.d\/jenkins.repo"
                     ]
                   ]
                 }
@@ -532,7 +532,7 @@
                   "Fn::Join": [
                     "",
                     [
-                      "sudo rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key"
+                      "sudo rpm --import https:\/\/pkg.jenkins.io\/redhat\/jenkins.io.key"
                     ]
                   ]
                 }
@@ -542,7 +542,7 @@
                   "Fn::Join": [
                     "",
                     [
-                      "sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo"
+                      "sudo wget http:\/\/repos.fedorapeople.org\/repos\/dchen\/apache-maven\/epel-apache-maven.repo -O \/etc\/yum.repos.d\/epel-apache-maven.repo"
                     ]
                   ]
                 }
@@ -689,7 +689,7 @@
       },
       "CreationPolicy": {
         "ResourceSignal": {
-          "Timeout": "PT5M"
+          "Timeout": "PT10M"
         }
       }
     },
