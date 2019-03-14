@@ -46,6 +46,6 @@ Afterwards, we can start the server:
 
 Now we can go to the jenkins instance by going to the ipv4 address of the server, prepended by :8080. However, we want Jenkins to be available at port 80. We can do this with the following command:
 
-`iptables -t nat -A OUTPUT -o lo -p tcp --dport 80 -j REDIRECT --to-port 8080`
+`sudo iptables -t nat -A OUTPUT -o lo -p tcp --dport 80 -j REDIRECT --to-port 8080`
 
 Now we can go to the URL of the server to open Jenkins. 
