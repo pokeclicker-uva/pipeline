@@ -522,7 +522,7 @@
                   "Fn::Join": [
                     "",
                     [
-                      "curl --silent --location http:\/\/pkg.jenkins-ci.org\/redhat-stable\/jenkins.repo | sudo tee \/etc\/yum.repos.d\/jenkins.repo"
+                      "sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins.io/redhat/jenkins.repo"
                     ]
                   ]
                 }
@@ -532,7 +532,7 @@
                   "Fn::Join": [
                     "",
                     [
-                      "sudo rpm --import https:\/\/pkg.jenkins.io\/redhat\/jenkins.io.key"
+                      "sudo rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key"
                     ]
                   ]
                 }
@@ -542,7 +542,7 @@
                   "Fn::Join": [
                     "",
                     [
-                      "sudo wget http:\/\/repos.fedorapeople.org\/repos\/dchen\/apache-maven\/epel-apache-maven.repo -O \/etc\/yum.repos.d\/epel-apache-maven.repo"
+                      "sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo"
                     ]
                   ]
                 }
@@ -552,7 +552,7 @@
                   "Fn::Join": [
                     "",
                     [
-                      "sudo sed -i s\/\\$releasever\/6\/g \/etc\/yum.repos.d\/epel-apache-maven.repo"
+                      "sudo sed -i s/\\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo"
                     ]
                   ]
                 }
@@ -562,7 +562,7 @@
                   "Fn::Join": [
                     "",
                     [
-                      "wget --no-cookies --no-check-certificate --header \"Cookie: oraclelicense=accept-securebackup-cookie\"   \"http:\/\/download.oracle.com\/otn-pub\/java\/jdk\/11.0.2+9\/f51449fcd52f4d52b93a989c5c56ed3c\/jdk-11.0.2_linux-x64_bin.rpm\""
+                      "sudo wget --no-cookies --no-check-certificate --header \"Cookie: oraclelicense=accept-securebackup-cookie\"   \"http://download.oracle.com/otn-pub/java/jdk/11.0.2+9/f51449fcd52f4d52b93a989c5c56ed3c/jdk-11.0.2_linux-x64_bin.rpm\""
                     ]
                   ]
                 }
