@@ -3,6 +3,7 @@ This guide explains how to setup the build job for the backend. This guide consi
 1. Setup the Docker server
 2. Specify the environment variables
 3. Create the build job
+4. Setup the GitHub Webhook
 
 # 1. Setup the Docker server
 In this part we will specify the SSH server of Docker in the configuration of Jenkins. Go to `Manage Jenkins` => `Configure System` => `Publish over SSH`. Choose to add a new SSH configuration. Enter the following information for this instance:
@@ -86,3 +87,7 @@ Exec command: `cd /opt/docker; docker-compose stop; docker-compose build --no-ca
 
 You can further modify the build job to your likings (for instance add a email notification for each failed build). Press `Save` and the build job is ready to be used.
  	
+# 4. Setup the GitHub webhook
+To make Jenkins automatically build each time we commit to the previously specified branch(es) we need to setup a GitHub webhook (an alternative would be to poll the GitHub, but we advice against that because of the overhead). This part of this guide is entirely done in GitHub, and requires no further modifications in Jenkins. Go to your GitHub repository (e.g. `https://github.com/pokeclicker/backend`). Go to `Settings` => `Webhooks` => `Add webhook`. Enter the following `Payload URL`: `http://{your jenkins URL}/github-webhook/`. Leave the other settings the same. Click `Add webhook`.
+
+<img src="https://github.com/pokeclicker/pipeline/raw/master/images/add_webhook.png" width="50%" style="padding-left:20px;"  />
