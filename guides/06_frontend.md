@@ -35,7 +35,20 @@ All we have to do now is enable Static Website Hosting. Go to `Properties` => `S
 
 <img src="https://github.com/pokeclicker/pipeline/raw/master/images/static_website_hosting.png" width="25%" style="padding-left:20px;"  />
 
-# 2. Create the Jenkins build job
+# 2. Create the secret file that specifies the API root
+The frontend has to be pointed To do this, go to `Credentials` => `Stores scoped to Jenkins` => `Jenkins` => `Global credentials (unrestricted)` => `Add Credentials`. In this form, enter the following information:
+
+Kind: `Secret text`
+Scope: `Global`
+Secret: `http://docker.uva-se.nl/` (Or whatever address your docker server is on, this can also be an ip. Be sure to include http://.)
+ID: `docker-api-root`
+Description: `Docker API web address.`
+
+Click `OK` to save this secret file.
+
+<img src="https://github.com/pokeclicker/pipeline/raw/master/images/secret_text.png" width="50%" style="padding-left:20px;"  />
+
+# 3. Create the Jenkins build job
 This part of the tutorial explains how to create the Jenkins job to build and deploy the frontend. Click `New Item` in Jenkins and create a project of type `Freestyle project`.
 
 In the `General` part we want to specify the GitHub URL of the job: `https://github.com/pokeclicker/frontend`.
