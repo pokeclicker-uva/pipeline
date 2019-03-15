@@ -15,12 +15,32 @@ Click the `Use password authentication, or use a different key` checkbox. As adv
 Passphrase / Password: `mypassword` (The password you specified for the Docker server for the `dockeradmin` user.)
 Port: `22` (SFTP: FTP over SSH. This makes sure you don't need any ftp server running on port 21.)
 
-After you have done this, please click `Test Configuration` to check whether Jenkins can connect to your Docker server.
+After you have done this, please click `Test Configuration` to check whether Jenkins can connect to your Docker server. If it works, press `Save` to save the newly setup SSH server.
 
 <img src="https://github.com/pokeclicker/pipeline/raw/master/images/jenkins_ssh_config.png" width="50%" style="padding-left:20px;"  />
 
 # 2. Specify the environment variables
+The PokeClicker application stores all it's confidential information, like the database password, in an environment variables file called `.env`. For PokeClicker, this file has the following layout:
 
+```
+export pokeclicker_db_host=mydburl
+export pokeclicker_db_port=3306
+export pokeclicker_db_name=mydbname
+export pokeclicker_db_username=mydbusername
+export pokeclicker_db_password=mydbpassword
+```
+
+This file has to be stored as a secret in Jenkins. To do this, go to `Credentials` => `Stores scoped to Jenkins` => `Jenkins` => `Global credentials (unrestricted)` => `Add Credentials`. In this form, enter the following information:
+
+Kind: `Secret file`
+Scope: `Global`
+File: Your environment variables file.
+ID: `.env`
+Description: `Environment variables for the Backend application.`
+
+<img src="https://github.com/pokeclicker/pipeline/raw/master/images/secret_jenkins.png" width="50%" style="padding-left:20px;"  />
+
+Press `Save` to save the newly setup secret file.
 
 # 3. Create the build job
 In Jenkins, create a new project of type `Maven Project`:
