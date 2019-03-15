@@ -1,4 +1,4 @@
-This guide explains how to setup the build job for the backend. This guide consists of three parts:
+This guide explains how to setup the build job for the backend. This guide consists of four parts:
 
 1. Setup the Docker server
 2. Specify the environment variables
