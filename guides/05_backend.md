@@ -9,7 +9,7 @@ This guide explains how to setup the build job for the backend. This guide consi
 In this part we will specify the SSH server of Docker in the configuration of Jenkins. Go to `Manage Jenkins` => `Configure System` => `Publish over SSH`. Choose to add a new SSH configuration. Enter the following information for this instance:
 
 Name: `docker_hosts`
-Hostname: `docker.uva-se.nl` (Or whatever address your docker server is on, this can also be an ip. Be sure to ommit http:// and any slashes.)
+Hostname: `docker.uva-se.nl` (Or whatever address your docker server is on, this can also be an ip. Be sure to ommit `http://` and any slashes.)
 Username: `dockeradmin` (Or whatever username you chose to use with the Docker server.)
 
 Click the `Use password authentication, or use a different key` checkbox. As advanced settings, set it to the following:
