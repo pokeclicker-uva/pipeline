@@ -37,7 +37,9 @@ All we have to do now is enable Static Website Hosting. Go to `Properties` => `S
 <img src="https://github.com/pokeclicker/pipeline/raw/master/images/static_website_hosting.png" width="25%" style="padding-left:20px;"  />
 
 # 2. Configure the AWS S3 Bucket in Jenkins
+Now, we must enter the S3 Bucket credentials in Jenkins. In Jenkins, go to `Manage Jenkins` => `Configure System` => `Amazon S3 profiles`. Here, setup your S3 profile according to the settings of your bucket.
 
+<img src="https://github.com/pokeclicker/pipeline/raw/master/images/s3_jenkins.png" width="25%" style="padding-left:20px;"  />
 
 # 3. Create the secret file that specifies the API root
 The frontend has to be pointed To do this, go to `Credentials` => `Stores scoped to Jenkins` => `Jenkins` => `Global credentials (unrestricted)` => `Add Credentials`. In this form, enter the following information:
@@ -79,6 +81,32 @@ For build, we want to add a `Execute shell` step. Enter the following command to
 
 <img src="https://github.com/pokeclicker/pipeline/raw/master/images/frontend_6.png" width="50%" style="padding-left:20px;"  />
 
-The last thing left is to copy the webapplication to the S3 bucket. To do this, we create a post-build action named `Publish artifacts to S3 Bucket`.
+The last thing left is to copy the webapplication to the S3 bucket. To do this, we create a post-build action named `Publish artifacts to S3 Bucket`. Choose the following settings:
+
+S3 profile: Choose the profile we created before.
+
+Source: `build/**`
+
+Destination bucket: `simonbaars-pokeclicker` (The name of your bucket)
+
+Storage class: `STANDARD`
+
+Bucket Region: `eu-central-1` (Where your bucket is located)
+
+No upload on build failure: `checked`
+
+Publish from Slave: `unchecked`
+
+Manage artifacts: `unchecked`
+
+Server side encryption: `unchecked`
+
+Flatten directories: `unchecked`
+
+GZIP files: `unchecked`
+
+Keep files forever: `unchecked`
+
+Show content directly in browser: `unchecked`
 
 <img src="https://github.com/pokeclicker/pipeline/raw/master/images/frontend_7.png" width="60%" style="padding-left:20px;"  />
