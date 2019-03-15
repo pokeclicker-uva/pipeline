@@ -7,9 +7,7 @@ First we need to create an EC2 instance. Jenkins does not run well with only 1GB
 3. Set the following security settings:
 
 
-<img src="https://github.com/pokeclicker/pipeline/raw/master/images/security_group_jenkins.png"
-     alt="Security Group Jenkins"
-      width="50%" style="padding-left:20px;"  />
+<img src="https://github.com/pokeclicker/pipeline/raw/master/images/security_group_jenkins.png" alt="Security Group Jenkins" width="50%" style="padding-left:20px;"  />
 
 4. Leave all the other settings the same and choose "Create"
 5. You might want to rename this instance to "Jenkins"
