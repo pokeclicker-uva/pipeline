@@ -4,6 +4,12 @@ This guide explains how to setup the build job for the backend. This guide consi
 2. Specify the environment variables
 3. Create the build job
 
+# 1. Setup the Docker server
+
+
+# 2. Specify the environment variables
+
+
 # 3. Create the build job
 In Jenkins, create a new project of type `Maven Project`:
 
@@ -34,3 +40,17 @@ Then, in the `Build` section, we want to set the Root POM to `pom.xml` and the G
 <img src="https://github.com/pokeclicker/pipeline/raw/master/images/backend_5.png" width="50%" style="padding-left:20px;"  />
 
 Next, we have to specify the postbuild options. This is where we copy all files to the Docker server and run the Docker image. However, we must first copy the environment variables (from the secret file) into the workspace. To do this, add a new postbuild step of type `Execute shell`. Enter the following command: `rm -f ./.env && cp $sec ./.env`.
+
+<img src="https://github.com/pokeclicker/pipeline/raw/master/images/backend_71.png" width="50%" style="padding-left:20px;"  />
+
+Now, we need to copy all files to the Docker server using SSH. To do this, add a new postbuild step of type `Send files or execute commands over SSH`. Add a single `	SSH Server` with the following settings:
+
+Name: `docker_hosts`
+Source files: `Dockerfile,target/*.jar,.env,docker-compose.yml`
+Remote directory: `//opt//docker`
+Exec command: `cd /opt/docker; docker-compose stop; docker-compose build --no-cache; docker-compose up -d --force-recreate`
+
+<img src="https://github.com/pokeclicker/pipeline/raw/master/images/backend_72.png" width="50%" style="padding-left:20px;"  />
+
+You can further modify the build job to your likings (for instance add a email notification for each failed build). Press `Save` and the build job is ready to be used.
+ 	
