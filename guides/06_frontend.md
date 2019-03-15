@@ -37,7 +37,9 @@ All we have to do now is enable Static Website Hosting. Go to `Properties` => `S
 <img src="https://github.com/pokeclicker/pipeline/raw/master/images/static_website_hosting.png" width="25%" style="padding-left:20px;"  />
 
 # 2. Configure the AWS S3 Bucket in Jenkins
+Now, we must enter the S3 Bucket credentials in Jenkins. In Jenkins, go to `Manage Jenkins` => `Configure System` => `Amazon S3 profiles`. Here, setup your S3 profile according to the settings of your bucket.
 
+<img src="https://github.com/pokeclicker/pipeline/raw/master/images/s3_jenkins.png" width="25%" style="padding-left:20px;"  />
 
 # 3. Create the secret file that specifies the API root
 The frontend has to be pointed To do this, go to `Credentials` => `Stores scoped to Jenkins` => `Jenkins` => `Global credentials (unrestricted)` => `Add Credentials`. In this form, enter the following information:
