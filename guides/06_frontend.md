@@ -81,6 +81,20 @@ For build, we want to add a `Execute shell` step. Enter the following command to
 
 <img src="https://github.com/pokeclicker/pipeline/raw/master/images/frontend_6.png" width="50%" style="padding-left:20px;"  />
 
-The last thing left is to copy the webapplication to the S3 bucket. To do this, we create a post-build action named `Publish artifacts to S3 Bucket`.
+The last thing left is to copy the webapplication to the S3 bucket. To do this, we create a post-build action named `Publish artifacts to S3 Bucket`. Choose the following settings:
+
+S3 profile: Choose the profile we created before.
+Source: `build/**`
+Destination bucket: `simonbaars-pokeclicker` (The name of your bucket)
+Storage class: `STANDARD`
+Bucket Region: `eu-central-1` (Where your bucket is located)
+No upload on build failure: `checked`
+Publish from Slave: `unchecked`
+Manage artifacts: `unchecked`
+Server side encryption: `unchecked`
+Flatten directories: `unchecked`
+GZIP files: `unchecked`
+Keep files forever: `unchecked`
+Show content directly in browser: `unchecked`
 
 <img src="https://github.com/pokeclicker/pipeline/raw/master/images/frontend_7.png" width="60%" style="padding-left:20px;"  />
