@@ -5,7 +5,19 @@ This guide explains how to setup the build job for the backend. This guide consi
 3. Create the build job
 
 # 1. Setup the Docker server
+In this part we will specify the SSH server of Docker in the configuration of Jenkins. Go to `Manage Jenkins` => `Configure System` => `Publish over SSH`. Choose to add a new SSH configuration. Enter the following information for this instance:
 
+Name: `docker_hosts`
+Hostname: `docker.uva-se.nl` (Or whatever address your docker server is on, this can also be an ip. Be sure to ommit http:// and any slashes.)
+Username: `dockeradmin` (Or whatever username you chose to use with the Docker server.)
+
+Click the `Use password authentication, or use a different key` checkbox. As advanced settings, set it to the following:
+Passphrase / Password: `mypassword` (The password you specified for the Docker server for the `dockeradmin` user.)
+Port: `22` (SFTP: FTP over SSH. This makes sure you don't need any ftp server running on port 21.)
+
+After you have done this, please click `Test Configuration` to check whether Jenkins can connect to your Docker server.
+
+<img src="https://github.com/pokeclicker/pipeline/raw/master/images/jenkins_ssh_config.png" width="50%" style="padding-left:20px;"  />
 
 # 2. Specify the environment variables
 
